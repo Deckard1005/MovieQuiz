@@ -20,7 +20,6 @@ final class MovieQuizViewController: UIViewController {
         let buttonText: String
     }
     
-    
     @IBOutlet private weak var questionTitleLabel: UILabel!
     @IBOutlet private weak var indexLabel: UILabel!
     @IBOutlet private weak var imageView: UIImageView!
@@ -77,16 +76,23 @@ final class MovieQuizViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureFonts()
+        configureImage()
+        showCurrentQuestion()
+    }
+    
+    private func configureFonts() {
         questionTitleLabel.font = UIFont.ysMedium20
         indexLabel.font = UIFont.ysMedium20
         textLabel.font = UIFont.ysBold23
         noButton.titleLabel?.font = UIFont.ysMedium20
         yesButton.titleLabel?.font = UIFont.ysMedium20
-        
+    }
+    
+    private func showCurrentQuestion() {
         let currentQuestion = questions[currentQuestionIndex]
         let convertedData = convert(model: currentQuestion)
         show(quiz: convertedData)
-        
     }
     
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
@@ -97,22 +103,23 @@ final class MovieQuizViewController: UIViewController {
         return questionStep
     }
     
+    private func configureImage() {
+        imageView.layer.masksToBounds = true
+        imageView.layer.cornerRadius = 20
+    }
+    
     private func showAnswerResult(isCorrect: Bool) {
         if isCorrect {
             correctAnswers += 1
-            imageView.layer.masksToBounds = true
-            imageView.layer.borderWidth = 8
-            imageView.layer.borderColor = UIColor.ypGreen.cgColor
-            imageView.layer.cornerRadius = 20
         }
-        else {
-            imageView.layer.masksToBounds = true
-            imageView.layer.borderWidth = 8
-            imageView.layer.borderColor = UIColor.ypRed.cgColor
-            imageView.layer.cornerRadius = 20
-        }
+        imageView.layer.borderWidth = 8
+        imageView.layer.borderColor = isCorrect
+        ? UIColor.ypGreen.cgColor
+        : UIColor.ypRed.cgColor
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.showNextQuestionOrResults()
+            self.imageView.layer.borderWidth = 0
         }
     }
     
@@ -124,7 +131,7 @@ final class MovieQuizViewController: UIViewController {
         imageView.layer.borderColor = nil
     }
     
-    private func show(quiz result: QuizResultsViewModel) {
+    private func showResults(quiz result: QuizResultsViewModel) {
         let alert = UIAlertController(
             title: result.title,
             message: result.text,
@@ -151,7 +158,7 @@ final class MovieQuizViewController: UIViewController {
                 title: "Этот раунд окончен!",
                 text: text,
                 buttonText: "Сыграть ещё раз")
-            show(quiz: viewModel)
+            showResults(quiz: viewModel)
             
         } else {
             currentQuestionIndex += 1
