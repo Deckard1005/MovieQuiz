@@ -80,7 +80,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         noButton.isEnabled = false
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
             self.imageView.layer.borderWidth = 0
             self.imageView.layer.borderColor = nil
             self.showNextQuestionOrResults()
@@ -143,14 +143,14 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
 
     // MARK: - Actions
     @IBAction private func noButtonClicked(_ sender: UIButton) {
-        guard let currentQuestion = currentQuestion else { return }
+        guard let currentQuestion else { return }
         let givenAnswer = false
         showAnswerResult(
             isCorrect: givenAnswer == currentQuestion.correctAnswer
         )
     }
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
-        guard let currentQuestion = currentQuestion else {
+        guard let currentQuestion else {
             return
         }
         let givenAnswer = true
